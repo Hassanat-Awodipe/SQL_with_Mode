@@ -69,3 +69,36 @@ FULL JOIN (SELECT founded_quarter,
           HAVING founded_quarter >= '2012-Q1') founded
 ON acquisitions.acquired_quarter = founded.founded_quarter
 ORDER BY 1
+
+
+--Write a query that ranks investors from the combined dataset above by the total number of investments they have made.
+
+SELECT company_name,
+      SUM(raised_amount_usd),
+      RANK() OVER (ORDER BY SUM(raised_amount_usd)) AS investor_rank
+  FROM (
+        SELECT *
+          FROM tutorial.crunchbase_investments_part1
+
+         UNION ALL
+
+        SELECT *
+          FROM tutorial.crunchbase_investments_part2
+       ) sub
+GROUP BY 1
+ORDER BY 2 DESC
+
+--Mode Solution
+SELECT investor_name,
+       COUNT(*) AS investments
+  FROM (
+        SELECT *
+          FROM tutorial.crunchbase_investments_part1
+
+         UNION ALL
+
+         SELECT *
+           FROM tutorial.crunchbase_investments_part2
+       ) sub
+ GROUP BY 1
+ ORDER BY 2 DESC
